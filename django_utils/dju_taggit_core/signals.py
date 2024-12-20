@@ -12,9 +12,12 @@ if TYPE_CHECKING:
     from django.db import models
 
 try:
-    from taggit.models import TagBase, TaggedItemBase
+    from taggit.models import TagBase, TaggedItemBase  # pyright: ignore[reportMissingImports]
 
-    from django_utils.dju_taggit.models import HashtagBase, HashtaggedItemBase
+    from django_utils.dju_taggit.models import (  # pyright: ignore[reportMissingImports]
+        HashtagBase,
+        HashtaggedItemBase,
+    )
 
     @receiver(post_save, dispatch_uid='post_save_hashtagged_item')
     def post_save_hashtagged_item(

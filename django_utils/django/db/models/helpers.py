@@ -19,9 +19,10 @@ def create_generic_index_name(
     (8 chars) and unique hash + suffix (10 chars). Each part is made to
     fit its size by truncating the excess length.
     """
-    from django.utils.translation import (  # noqa: I001  # pylint: disable=import-outside-toplevel
-        gettext_lazy as _,
-    )
+    # pylint: disable=import-outside-toplevel
+    from django.utils.translation import gettext_lazy as _
+
+    # pylint: enable=import-outside-toplevel
 
     if not isinstance(table_name, str):
         raise TypeError(_("'table_name' must be str"))
@@ -71,9 +72,10 @@ def create_generic_index_name_old(
     The name is divided into 3 parts: the table name, the column names,
     and a unique digest and suffix.
     """
-    from django.utils.translation import (  # noqa: I001 # pylint: disable=import-outside-toplevel
-        gettext_lazy as _,
-    )
+    # pylint: disable=import-outside-toplevel
+    from django.utils.translation import gettext_lazy as _
+
+    # pylint: enable=import-outside-toplevel
 
     if not isinstance(table_name, str):
         raise TypeError(_("'table_name' must be str"))

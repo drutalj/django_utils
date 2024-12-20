@@ -4,9 +4,16 @@ from django.utils.translation import gettext_lazy as _
 from django_utils.django.db.models.helpers import create_unique_constraint_name
 
 try:
-    from django_utils.dju_taggit_core.models import GenericUUIDTaggedItemBase, HashtagBase
-    from django_utils.dju_taggit_core.models import HashtaggedItemBase as _HashtaggedItemBase
-    from django_utils.dju_taggit_core.models import TaggedItemBase as _TaggedItemBase
+    from django_utils.dju_taggit_core.models import (  # pyright: ignore[reportMissingImports]
+        GenericUUIDTaggedItemBase,
+        HashtagBase,
+    )
+    from django_utils.dju_taggit_core.models import (
+        HashtaggedItemBase as _HashtaggedItemBase,  # pyright: ignore[reportMissingImports]
+    )
+    from django_utils.dju_taggit_core.models import (
+        TaggedItemBase as _TaggedItemBase,  # pyright: ignore[reportMissingImports]
+    )
 
     class Hashtag(HashtagBase):
         class Meta(HashtagBase.Meta):

@@ -4,17 +4,15 @@ from django.utils.translation import gettext_lazy as _
 from django_utils.django.db.models import UUIDIDMixin
 
 try:
-    from taggit.models import (  # noqa: I001,I005  # pyright: ignore[reportMissingImports]
-        GenericTaggedItemBase as _GenericTaggedItemBase,
+    from taggit.models import (
+        GenericTaggedItemBase as _GenericTaggedItemBase,  # pyright: ignore[reportMissingImports]
     )
-    from taggit.models import (  # noqa: I001,I005  # pyright: ignore[reportMissingImports]
+    from taggit.models import (  # noqa: E501  # pyright: ignore[reportMissingImports]
         GenericUUIDTaggedItemBase as _GenericUUIDTaggedItemBase,
     )
-    from taggit.models import (  # noqa: I001,I005  # pyright: ignore[reportMissingImports]
-        TagBase as _TagBase,
-    )
-    from taggit.models import (  # noqa: I001,I005  # pyright: ignore[reportMissingImports]
-        TaggedItemBase as _TaggedItemBase,
+    from taggit.models import TagBase as _TagBase  # pyright: ignore[reportMissingImports]
+    from taggit.models import (
+        TaggedItemBase as _TaggedItemBase,  # pyright: ignore[reportMissingImports]
     )
 
     class TagBase(UUIDIDMixin, _TagBase):

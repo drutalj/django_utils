@@ -137,10 +137,7 @@ class ResponseSerializerMixin(GenericAPIView):
             if get_object is True:
                 instance = self.get_response_object(obj=instance)
 
-            response_serializer: Serializer | ListSerializer = response_serializer_class(
-                instance, **response_serializer_kwargs
-            )
-            return response_serializer
+            return response_serializer_class(instance, **response_serializer_kwargs)
         return serializer
 
 

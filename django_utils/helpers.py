@@ -53,10 +53,7 @@ def isdict(
     if not isallinstance(list(value.keys()), type_or_tuple_key):
         return False
 
-    if not isallinstance(list(value.values()), type_or_tuple_value):
-        return False
-
-    return True
+    return isallinstance(list(value.values()), type_or_tuple_value)
 
 
 def getattr_nested(

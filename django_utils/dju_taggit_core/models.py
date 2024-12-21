@@ -1,9 +1,6 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-from django_utils.django.db.models import UUIDIDMixin
-
 try:
+    from django.db import models
+    from django.utils.translation import gettext_lazy as _
     from taggit.models import (
         GenericTaggedItemBase as _GenericTaggedItemBase,  # pyright: ignore[reportMissingImports]
     )
@@ -14,6 +11,8 @@ try:
     from taggit.models import (
         TaggedItemBase as _TaggedItemBase,  # pyright: ignore[reportMissingImports]
     )
+
+    from django_utils.django.db.models import UUIDIDMixin
 
     class TagBase(UUIDIDMixin, _TagBase):
         class Meta(UUIDIDMixin.Meta, _TagBase.Meta):

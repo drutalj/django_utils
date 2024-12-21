@@ -1,23 +1,22 @@
-from typing import TYPE_CHECKING
-
-from django.conf import settings
-from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.signals import post_delete, post_save
-from django.dispatch import receiver
-
-if TYPE_CHECKING:
-    from datetime import datetime
-    from typing import Any
-
-    from django.db import models
-
 try:
+    from typing import TYPE_CHECKING
+
+    from django.conf import settings
+    from django.db.models.fields.reverse_related import ManyToOneRel
+    from django.db.models.signals import post_delete, post_save
+    from django.dispatch import receiver
     from taggit.models import TagBase, TaggedItemBase  # pyright: ignore[reportMissingImports]
 
     from django_utils.dju_taggit.models import (  # pyright: ignore[reportMissingImports]
         HashtagBase,
         HashtaggedItemBase,
     )
+
+    if TYPE_CHECKING:
+        from datetime import datetime
+        from typing import Any
+
+        from django.db import models
 
     @receiver(post_save, dispatch_uid='post_save_hashtagged_item')
     def post_save_hashtagged_item(

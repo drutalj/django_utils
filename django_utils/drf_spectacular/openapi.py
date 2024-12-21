@@ -1,13 +1,12 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from typing import Self
-
-
 try:
+    from typing import TYPE_CHECKING
+
     from drf_spectacular.openapi import (
         AutoSchema as _AutoSchema,  # pyright: ignore[reportMissingImports]
     )
+
+    if TYPE_CHECKING:
+        from typing import Self
 
     if TYPE_CHECKING:
         from drf_spectacular.utils import _SerializerType  # pyright: ignore[reportMissingImports]

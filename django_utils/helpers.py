@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-def isallinstance(
+def isallinstance(  # noqa: FNE005
     obj_or_sequence_or_set: 'Any',
     type_or_tuple: type['Any'] | tuple[type['Any'], ...],
     type_or_tuple_if_obj: type['Any'] | tuple[type['Any'], ...] | None = None,
@@ -31,7 +31,7 @@ def isallinstance(
     return all(isinstance(item, type_or_tuple) for item in obj_or_sequence_or_set)
 
 
-def isdict(
+def isdict(  # noqa: FNE005
     value: 'Any',
     type_or_tuple_key: type['Any'] | tuple[type['Any'], ...],
     type_or_tuple_value: type['Any'] | tuple[type['Any'], ...] = object,
@@ -63,6 +63,7 @@ def getattr_nested(
         attr_path += last_item_suffix
         for attr in attr_path.split('__'):
             obj = getattr(obj, attr)
-        return obj
     except AttributeError:
         return default
+    else:
+        return obj

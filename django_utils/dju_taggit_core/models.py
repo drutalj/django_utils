@@ -4,7 +4,7 @@ try:
     from taggit.models import (
         GenericTaggedItemBase as _GenericTaggedItemBase,  # pyright: ignore[reportMissingImports]
     )
-    from taggit.models import (  # noqa: E501  # pyright: ignore[reportMissingImports]
+    from taggit.models import (  # noqa: I001  # pyright: ignore[reportMissingImports]
         GenericUUIDTaggedItemBase as _GenericUUIDTaggedItemBase,
     )
     from taggit.models import TagBase as _TagBase  # pyright: ignore[reportMissingImports]
@@ -19,6 +19,9 @@ try:
             abstract = True
 
     class HashtagBase(TagBase):
+        class Meta(TagBase.Meta):
+            abstract = True
+
         count = models.BigIntegerField(
             null=False,
             blank=True,
@@ -36,23 +39,11 @@ try:
             db_index=True,
         )
 
-        class Meta(TagBase.Meta):
-            abstract = True
-
     class TaggedItemBase(UUIDIDMixin, _TaggedItemBase):
         class Meta(UUIDIDMixin.Meta, _TaggedItemBase.Meta):
             abstract = True
 
     class HashtaggedItemBase(TaggedItemBase):
-        created_at = models.DateTimeField(
-            null=False,
-            blank=True,
-            auto_now_add=True,
-            editable=False,
-            verbose_name=_("created at"),
-            db_index=True,
-        )
-
         class Meta(TaggedItemBase.Meta):
             abstract = True
             indexes: list[models.Index] = [
@@ -63,6 +54,15 @@ try:
                     ),
                 ),
             ]
+
+        created_at = models.DateTimeField(
+            null=False,
+            blank=True,
+            auto_now_add=True,
+            editable=False,
+            verbose_name=_("created at"),
+            db_index=True,
+        )
 
     class GenericTaggedItemBase(UUIDIDMixin, _GenericTaggedItemBase):
         class Meta(UUIDIDMixin.Meta, _GenericTaggedItemBase.Meta):

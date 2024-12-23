@@ -9,10 +9,10 @@ __all__: list[str] = [
 
 
 class UUIDIDMixin(models.Model):
+    class Meta:
+        abstract = True
+
     id = fields.AutoUUID4Field(  # noqa: A003,VNE003
         primary_key=True,
         verbose_name=_("id"),
     )
-
-    class Meta:
-        abstract = True

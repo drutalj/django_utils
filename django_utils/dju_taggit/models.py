@@ -20,12 +20,12 @@ try:
             verbose_name_plural: str = _("hashtags")
 
     class TaggedItemBase(_TaggedItemBase):
+        class Meta(_TaggedItemBase.Meta):
+            abstract = True
+
         tag = models.ForeignKey(
             Hashtag, related_name='%(app_label)s_%(class)s_items', on_delete=models.CASCADE
         )
-
-        class Meta(_TaggedItemBase.Meta):
-            abstract = True
 
     class HashtaggedItemBase(
         TaggedItemBase, _HashtaggedItemBase

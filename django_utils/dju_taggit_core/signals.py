@@ -19,11 +19,11 @@ try:
         from django.db import models
 
     @receiver(post_save, dispatch_uid='post_save_hashtagged_item')
-    def post_save_hashtagged_item(
-        sender: 'type[models.Model]',  # pylint: disable=unused-argument
+    def post_save_hashtagged_item(  # noqa: FNE003
+        sender: 'type[models.Model]',  # noqa: U100  # pylint: disable=unused-argument
         instance: 'models.Model',
         created: bool,
-        **kwargs: 'Any',
+        **kwargs: 'Any',  # noqa: U100
     ) -> None:
         if isinstance(instance, HashtaggedItemBase) and created is True:
             hashtag: 'TagBase' = instance.tag
@@ -35,9 +35,9 @@ try:
 
     @receiver(post_delete, dispatch_uid='post_delete_tagged_item')
     def post_delete_hashtagged_item(
-        sender: 'type[models.Model]',  # pylint: disable=unused-argument
+        sender: 'type[models.Model]',  # noqa: U100  # pylint: disable=unused-argument
         instance: 'models.Model',
-        **kwargs: 'Any',
+        **kwargs: 'Any',  # noqa: U100
     ) -> None:
         if isinstance(instance, TaggedItemBase):  # pylint: disable=too-many-nested-blocks
             tag: 'TagBase' = instance.tag

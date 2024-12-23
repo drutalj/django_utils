@@ -47,11 +47,11 @@ def create_generic_index_name(
     hash_data: list[str] = [table_name] + column_names_with_order + [suffix]
     hash_length = 9 - len(suffix)
     name: str = (
-        f'{table_name[:11]}_{column_names[0][:7]}_{names_digest(*hash_data, length=hash_length)}_{suffix}'  # noqa: E501  # pylint: disable=line-too-long
+        f'{table_name[:11]}_{column_names[0][:7]}_{names_digest(*hash_data, length=hash_length)}_{suffix}'  # noqa: E501,LN001  # pylint: disable=line-too-long
     )
     max_name_length = 30
     if len(name) > max_name_length:
-        raise ValueError(
+        raise ValueError(  # noqa: TRY003
             "Index too long for multiple database support. Is self.suffix "
             "longer than 3 characters?"
         )

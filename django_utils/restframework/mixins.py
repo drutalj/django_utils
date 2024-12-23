@@ -142,7 +142,9 @@ class ResponseSerializerMixin(GenericAPIView):
 
 
 class CreateModelMixin(ResponseSerializerMixin, _CreateModelMixin):
-    def create(self: 'Self', request: 'Request', *args: 'Any', **kwargs: 'Any') -> Response:
+    def create(
+        self: 'Self', request: 'Request', *args: 'Any', **kwargs: 'Any'  # noqa: U100
+    ) -> Response:
         if not isinstance(request, Request):
             raise TypeError(_("'request' must be instance of Request"))
 
@@ -167,7 +169,9 @@ class CreateModelMixin(ResponseSerializerMixin, _CreateModelMixin):
 
 
 class UpdateModelMixin(ResponseSerializerMixin, _UpdateModelMixin):
-    def update(self: 'Self', request: 'Request', *args: 'Any', **kwargs: 'Any') -> Response:
+    def update(
+        self: 'Self', request: 'Request', *args: 'Any', **kwargs: 'Any'  # noqa: U100
+    ) -> Response:
         if not isinstance(request, Request):
             raise TypeError(_("'request' must be instance of Request"))
 

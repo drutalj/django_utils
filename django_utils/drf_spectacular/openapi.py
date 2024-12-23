@@ -18,7 +18,7 @@ try:
             self.view._is_response = True  # pylint: disable=protected-access
             serializer: '_SerializerType | None' = self._get_serializer()
             self.view._is_response = _is_response  # pylint: disable=protected-access
-            return serializer  # noqa: R504
+            return serializer
 
 except ImportError:
     pass

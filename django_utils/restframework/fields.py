@@ -16,7 +16,7 @@ from django_utils.helpers import isallinstance
 
 
 class FileField(serializers.FileField):
-    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    def __init__(  # noqa: E501,CFQ002  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self: Self,
         allowed_extensions: None | tuple[str, ...] | list[str] | set[str] = None,
         min_size: None | int = None,

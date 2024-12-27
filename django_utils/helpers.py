@@ -65,5 +65,4 @@ def getattr_nested(
             obj = getattr(obj, attr)
     except AttributeError:
         return default
-    else:
-        return obj
+    return obj

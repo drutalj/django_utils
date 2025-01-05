@@ -48,7 +48,7 @@ class FileMinSizeValidator:
         if not isinstance(value, File):
             raise TypeError(_("'value' must be instance of File"))
 
-        if value.size < self.min_size:
+        if self.min_size > 0 and value.size < self.min_size:
             raise ValidationError(
                 self.message,
                 code=self.code,
@@ -307,7 +307,9 @@ try:
 
             if self.min_width > 0 or self.min_height > 0:
                 image: ImageFile = Image.open(value.file)
-                if image.width < self.min_width or image.height < self.min_height:
+                if (self.min_width > 0 and image.width < self.min_width) or (
+                    self.min_height > 0 and image.height < self.min_height
+                ):
                     raise ValidationError(
                         self.message,
                         code=self.code,

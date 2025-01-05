@@ -21,24 +21,24 @@ if TYPE_CHECKING:
 @deconstructible
 class FileMinSizeValidator:
     message: str = _(
-        "Ensure this file size is not less than %(min_size)s. Your file size is %(size)s."
+        "Ensure this file size is equal or greater than %(min_size)s. Your file size is %(size)s."
     )
     code: str = 'min_size'
 
     def __init__(
         self: 'Self',
-        min_size: int | None = None,
+        min_size: int = 0,
         message: str | None = None,
         code: str | None = None,
     ) -> None:
-        if not isinstance(min_size, (int, NoneType)):
-            raise TypeError(_("'min_size' must be None or int"))
+        if not isinstance(min_size, int):
+            raise TypeError(_("'min_size' must be int"))
         if not isinstance(message, (str, NoneType)):
             raise TypeError(_("'message' must be None or str"))
         if not isinstance(code, (str, NoneType)):
             raise TypeError(_("'code' must be None or str"))
 
-        self.min_size: int | None = min_size
+        self.min_size: int = min_size
         if message is not None:
             self.message = message
         if code is not None:
@@ -48,7 +48,7 @@ class FileMinSizeValidator:
         if not isinstance(value, File):
             raise TypeError(_("'value' must be instance of File"))
 
-        if self.min_size is not None and value.size < self.min_size:
+        if value.size < self.min_size:
             raise ValidationError(
                 self.message,
                 code=self.code,
@@ -82,7 +82,7 @@ class FileMaxSizeValidator:
         code: str | None = None,
     ) -> None:
         if not isinstance(max_size, (int, NoneType)):
-            raise TypeError(_("'min_size' must be None or int"))
+            raise TypeError(_("'max_size' must be None or int"))
         if not isinstance(message, (str, NoneType)):
             raise TypeError(_("'message' must be None or str"))
         if not isinstance(code, (str, NoneType)):
@@ -263,3 +263,135 @@ class FileContentTypeValidator:
             and self.message == other.message
             and self.code == other.code
         )
+
+
+try:
+    from PIL import Image  # pyright: ignore[reportMissingImports]
+
+    if TYPE_CHECKING:
+        from PIL.Image import Image as ImageFile
+
+    @deconstructible
+    class ImageMinSizeValidator:
+        message: str = _(
+            "Ensure this image size is equal or greater than %(min_width)spx x%(min_height)spx. Your file size is %(width)spx x %(height)spx."  # noqa: E501  # pylint: disable=line-too-long
+        )
+        code: str = 'min_size'
+
+        def __init__(
+            self: 'Self',
+            min_width: int = 0,
+            min_height: int = 0,
+            message: str | None = None,
+            code: str | None = None,
+        ) -> None:
+            if not isinstance(min_width, int):
+                raise TypeError(_("'min_width' must be int"))
+            if not isinstance(min_height, int):
+                raise TypeError(_("'min_height' must be int"))
+            if not isinstance(message, (str, NoneType)):
+                raise TypeError(_("'message' must be None or str"))
+            if not isinstance(code, (str, NoneType)):
+                raise TypeError(_("'code' must be None or str"))
+
+            self.min_width: int = min_width
+            self.min_height: int = min_height
+            if message is not None:
+                self.message = message
+            if code is not None:
+                self.code = code
+
+        def __call__(self: 'Self', value: 'File') -> None:
+            if not isinstance(value, File):
+                raise TypeError(_("'value' must be instance of File"))
+
+            if self.min_width > 0 or self.min_height > 0:
+                image: ImageFile = Image.open(value.file)
+                if image.width < self.min_width or image.height < self.min_height:
+                    raise ValidationError(
+                        self.message,
+                        code=self.code,
+                        params={
+                            'min_width': self.min_width,
+                            'min_height': self.min_height,
+                            'width': image.width,
+                            'height': image.height,
+                            'value': value,
+                        },
+                    )
+
+        def __eq__(self: 'Self', other: 'Any') -> bool:
+            return (
+                isinstance(other, self.__class__)
+                and self.min_width == other.min_width
+                and self.min_height == other.min_height
+                and self.message == other.message
+                and self.code == other.code
+            )
+
+    @deconstructible
+    class ImageMaxSizeValidator:
+        message: str = _(
+            "Ensure this image size is not greater than %(max_width)spx x%(max_height)spx. Your file size is %(width)spx x %(height)spx."  # noqa: E501  # pylint: disable=line-too-long
+        )
+        code: str = 'max_size'
+
+        def __init__(
+            self: 'Self',
+            max_width: int | None = None,
+            max_height: int | None = None,
+            message: str | None = None,
+            code: str | None = None,
+        ) -> None:
+            if not isinstance(max_width, (int, NoneType)):
+                raise TypeError(_("'max_width' must be None or int"))
+            if not isinstance(max_height, (int, NoneType)):
+                raise TypeError(_("'max_height' must be None or int"))
+            if not isinstance(message, (str, NoneType)):
+                raise TypeError(_("'message' must be None or str"))
+            if not isinstance(code, (str, NoneType)):
+                raise TypeError(_("'code' must be None or str"))
+
+            self.max_width: int | None = max_width
+            self.max_height: int | None = max_height
+            if message is not None:
+                self.message = message
+            if code is not None:
+                self.code = code
+
+        def __call__(self: 'Self', value: 'File') -> None:
+            if not isinstance(value, File):
+                raise TypeError(_("'value' must be instance of File"))
+
+            if self.max_width is not None or self.max_height is not None:
+                image: ImageFile = Image.open(value.file)
+                if (self.max_width is not None and image.width > self.max_width) or (
+                    self.max_height is not None and image.height > self.max_height
+                ):
+                    raise ValidationError(
+                        self.message,
+                        code=self.code,
+                        params={
+                            'max_width': (
+                                self.max_width if self.max_width is not None else _("unlimited")
+                            ),
+                            'max_height': (
+                                self.max_height if self.max_height is not None else _("unlimited")
+                            ),
+                            'width': image.width,
+                            'height': image.height,
+                            'value': value,
+                        },
+                    )
+
+        def __eq__(self: 'Self', other: 'Any') -> bool:
+            return (
+                isinstance(other, self.__class__)
+                and self.max_width == other.max_width
+                and self.max_height == other.max_height
+                and self.message == other.message
+                and self.code == other.code
+            )
+
+except ImportError:
+    pass

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from django.utils.translation import gettext_lazy as _
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Self
 
 
 def isallinstance(  # noqa: FNE005
@@ -66,3 +66,12 @@ def getattr_nested(
     except AttributeError:
         return default
     return obj
+
+
+class RestrictedFields:  # pylint: disable=too-few-public-methods
+    def _check_restricted_params(self: 'Self', restricted_params: list[str], kwargs: dict) -> None:
+        for param in restricted_params:
+            if param in kwargs:
+                raise TypeError(
+                    _("'%s' parameter is not allowed for %s.") % (param, self.__class__.__name__)
+                )

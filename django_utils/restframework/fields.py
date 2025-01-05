@@ -19,7 +19,7 @@ class FileField(serializers.FileField):
     def __init__(  # noqa: E501,CFQ002  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self: Self,
         allowed_extensions: None | tuple[str, ...] | list[str] | set[str] = None,
-        min_size: None | int = None,
+        min_size: int = 0,
         max_size: None | int = None,
         content_types: None | tuple[str, ...] | list[str] | set[str] = None,
         file_types: (
@@ -32,10 +32,10 @@ class FileField(serializers.FileField):
     ) -> None:
         if not isallinstance(allowed_extensions, str, NoneType):
             raise TypeError(_("'allowed_extensions' must be None or tuple, list or set of str"))
-        if not isinstance(min_size, (NoneType, int)):
-            raise TypeError(_("'min_size' must be None or int"))
+        if not isinstance(min_size, int):
+            raise TypeError(_("'min_size' must be int"))
         if not isinstance(max_size, (NoneType, int)):
-            raise TypeError(_("'min_size' must be None or int"))
+            raise TypeError(_("'max_size' must be None or int"))
         if not isallinstance(content_types, str, NoneType):
             raise TypeError(_("'content_types' must be None or tuple, list or set of str"))
         if not isallinstance(file_types, validators.FileType, NoneType):
@@ -49,7 +49,7 @@ class FileField(serializers.FileField):
                     allowed_extensions=allowed_extensions,
                 ),
             )
-        if min_size is not None:
+        if min_size > 0:
             self.default_validators.append(validators.FileMinSizeValidator(min_size=min_size))
         if max_size is not None:
             self.default_validators.append(validators.FileMaxSizeValidator(max_size=max_size))
@@ -63,15 +63,36 @@ class FileField(serializers.FileField):
 
 
 class ImageField(FileField, serializers.ImageField):
-    def __init__(
+    def __init__(  # noqa: CFQ002
         self: Self,
         allowed_extensions: None | tuple[str, ...] | list[str] | set[str] = None,
-        min_size: None | int = None,
+        min_size: int = 0,
         max_size: None | int = None,
+        min_width: int = 0,
+        min_height: int = 0,
+        max_width: None | int = None,
+        max_height: None | int = None,
         content_types: None | tuple[str, ...] | list[str] | set[str] = None,
         **kwargs: Any,
     ) -> None:
+        if not isinstance(min_width, int):
+            raise TypeError(_("'min_width' must be int"))
+        if not isinstance(min_height, int):
+            raise TypeError(_("'min_height' must be int"))
+        if not isinstance(max_width, (NoneType, int)):
+            raise TypeError(_("'max_width' must be None or int"))
+        if not isinstance(max_height, (NoneType, int)):
+            raise TypeError(_("'max_height' must be None or int"))
+
         file_types = [validators.FileType.IMAGE]
+        if min_width > 0 or min_height > 0:
+            self.default_validators.append(
+                validators.ImageMinSizeValidator(min_width=min_width, min_height=min_height)
+            )
+        if max_width is not None or max_height is not None:
+            self.default_validators.append(
+                validators.ImageMaxSizeValidator(max_width=max_width, max_height=max_height)
+            )
         super().__init__(
             allowed_extensions=allowed_extensions,
             min_size=min_size,

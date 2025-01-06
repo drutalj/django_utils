@@ -7,6 +7,7 @@ from .mixins import ResponseSerializerMixin
 if TYPE_CHECKING:
     from typing import Any, Literal, Self
 
+    from django.db.models import BaseManager
     from django.db.models.query import QuerySet
     from rest_framework.serializers import Serializer
 
@@ -15,15 +16,17 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     ResponseSerializerMixin, _GenericViewSet
 ):
     serializer_classes: dict[
-        "Literal['retrieve', 'list', 'create', 'update', 'partial_update']", type['Serializer']
+        "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']",
+        type['Serializer'],
     ] = {}
     querysets: dict[
-        "Literal['retrieve', 'list', 'create', 'update', 'partial_update']", 'QuerySet'
+        "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']",
+        'QuerySet | BaseManager',
     ] = {}
 
     def get_action_from_request(
         self: 'Self',
-    ) -> "Literal['retrieve', 'list', 'create', 'update', 'partial_update']":
+    ) -> "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']":
         if self.request is not None and self.request.method is not None:
             return self.action_map.get(  # pyright: ignore[reportAttributeAccessIssue]
                 self.request.method.lower()
@@ -33,7 +36,7 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     def get_serializer_class(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
     ) -> type['Serializer']:
-        action: Literal['retrieve', 'list', 'create', 'update', 'partial_update'] = (
+        action: Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy'] = (
             self.get_action_from_request()
         )
         if action == 'partial_update' and 'partial_update' not in self.serializer_classes:
@@ -45,11 +48,11 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet':
+    ) -> 'QuerySet | BaseManager':
         action: str = self.get_action_from_request()
         if action == 'partial_update' and 'partial_update' not in self.querysets:
             action = 'update'
-        queryset: QuerySet | None = self.querysets.get(action)
+        queryset: QuerySet | BaseManager | None = self.querysets.get(action)
         if queryset is None:
             queryset = super().get_queryset()
         return queryset  # noqa: R504

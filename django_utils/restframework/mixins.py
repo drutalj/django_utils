@@ -1,7 +1,7 @@
 from types import NoneType
 from typing import TYPE_CHECKING
 
-from django.db.models import Model
+from django.db.models import BaseManager, Model
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
@@ -45,7 +45,7 @@ class ResponseSerializerMixin(GenericAPIView):
         return ret  # noqa: R504
 
     def get_object_by_pk(
-        self: 'Self', pk: 'Any' = None, queryset: 'QuerySet | None' = None
+        self: 'Self', pk: 'Any' = None, queryset: 'QuerySet | BaseManager | None' = None
     ) -> 'Model':
         """
         Returns the object the view is displaying.
@@ -54,8 +54,8 @@ class ResponseSerializerMixin(GenericAPIView):
         queryset lookups.  Eg if objects are referenced using multiple
         keyword arguments in the url conf.
         """
-        if not isinstance(queryset, (QuerySet, NoneType)):
-            raise TypeError(_("'queryset' must be instance of QuerySet or None"))
+        if not isinstance(queryset, (QuerySet, BaseManager, NoneType)):
+            raise TypeError(_("'queryset' must be instance of QuerySet, BaseManager or None"))
 
         if queryset is None:
             queryset = self.filter_queryset(self.get_queryset())
@@ -100,8 +100,8 @@ class ResponseSerializerMixin(GenericAPIView):
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet':
-        queryset: QuerySet | None = None
+    ) -> 'QuerySet | BaseManager':
+        queryset: QuerySet | BaseManager | None = None
         if getattr(self, '_is_response', False) and hasattr(self, 'querysets'):
             queryset = self.querysets.get('retrieve')  # pyright: ignore[reportAttributeAccessIssue]
         if queryset is None:

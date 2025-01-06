@@ -37,7 +37,7 @@ class ModelSerializer(_ModelSerializer):
         request: Request | None = self.context.get('request')
         if request:
             allowed_fields_dict: dict[
-                Literal['create', 'retrieve', 'update', 'partial_update', 'list'],
+                Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list'],
                 tuple[str, ...] | list[str] | set[str],
             ] = getattr(
                 self.Meta,  # noqa: E501  # pylint: disable=no-member  # pyright: ignore[reportAttributeAccessIssue]
@@ -66,6 +66,11 @@ class ModelSerializer(_ModelSerializer):
                 allowed_fields: tuple[str, ...] | list[str] | set[str] | None = (
                     allowed_fields_dict.get('partial_update', allowed_fields_dict.get('update'))
                 )
+            elif request.method == 'DELETE':
+                allowed_fields: tuple[str, ...] | list[str] | set[str] | None = (
+                    allowed_fields_dict.get('destroy')
+                )
+
             if allowed_fields is not None:
                 for field_name in list(self.fields):
                     if field_name not in allowed_fields:

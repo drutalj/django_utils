@@ -16,17 +16,17 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     ResponseSerializerMixin, _GenericViewSet
 ):
     serializer_classes: dict[
-        "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']",
+        "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']",
         type['Serializer'],
     ] = {}
     querysets: dict[
-        "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']",
+        "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']",
         'QuerySet | BaseManager',
     ] = {}
 
     def get_action_from_request(
         self: 'Self',
-    ) -> "Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy']":
+    ) -> "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']":
         if self.request is not None and self.request.method is not None:
             return self.action_map.get(  # pyright: ignore[reportAttributeAccessIssue]
                 self.request.method.lower()
@@ -36,7 +36,7 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     def get_serializer_class(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
     ) -> type['Serializer']:
-        action: Literal['create', 'retrieve', 'update', 'partial_update', 'list', 'destroy'] = (
+        action: Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list'] = (
             self.get_action_from_request()
         )
         if action == 'partial_update' and 'partial_update' not in self.serializer_classes:

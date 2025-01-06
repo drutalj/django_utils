@@ -37,7 +37,7 @@ class ModelSerializer(_ModelSerializer):
         request: Request | None = self.context.get('request')
         if request:
             allowed_fields_dict: dict[
-                Literal['retrieve', 'list', 'create', 'update', 'partial_update'],
+                Literal['create', 'retrieve', 'update', 'partial_update', 'list'],
                 tuple[str, ...] | list[str] | set[str],
             ] = getattr(
                 self.Meta,  # noqa: E501  # pylint: disable=no-member  # pyright: ignore[reportAttributeAccessIssue]

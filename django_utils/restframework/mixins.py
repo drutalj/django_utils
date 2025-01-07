@@ -13,7 +13,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer, Serializer
 
-from .serializers import ModelSerializer
+from django_utils.restframework.serializers import ModelSerializer
 
 if TYPE_CHECKING:
     from typing import Any, Self
@@ -46,7 +46,9 @@ class ResponseSerializerMixin(GenericAPIView):
         return ret  # noqa: R504
 
     def get_object_by_pk(
-        self: 'Self', pk: 'Any' = None, queryset: 'QuerySet | BaseManager | None' = None
+        self: 'Self',
+        pk: 'Any' = None,
+        queryset: 'QuerySet[Model] | BaseManager[Model] | None' = None,
     ) -> 'Model':
         """
         Returns the object the view is displaying.
@@ -101,8 +103,8 @@ class ResponseSerializerMixin(GenericAPIView):
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet | BaseManager':
-        queryset: QuerySet | BaseManager | None = None
+    ) -> 'QuerySet[Model] | BaseManager[Model]':
+        queryset: QuerySet[Model] | BaseManager[Model] | None = None
         if getattr(self, '_is_response', False) and hasattr(self, 'querysets'):
             queryset = self.querysets.get('retrieve')  # pyright: ignore[reportAttributeAccessIssue]
         if queryset is None:

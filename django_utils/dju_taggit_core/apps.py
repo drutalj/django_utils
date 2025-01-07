@@ -11,4 +11,6 @@ class DjuTaggitConfig(AppConfig):
     name = 'django_utils.dju_taggit_core'
 
     def ready(self: 'Self') -> None:
-        from . import signals  # noqa: F401  # pylint: disable=import-outside-toplevel,unused-import
+        from django_utils.dju_taggit_core import (  # noqa: F401,E501  # pylint: disable=import-outside-toplevel,unused-import
+            signals,
+        )

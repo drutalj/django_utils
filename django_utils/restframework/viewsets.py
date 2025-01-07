@@ -2,12 +2,14 @@ from typing import TYPE_CHECKING
 
 from rest_framework.viewsets import GenericViewSet as _GenericViewSet
 
-from .mixins import ResponseSerializerMixin
+from django_utils.restframework.mixins import ResponseSerializerMixin
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Self
 
-    from django.db.models import BaseManager
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+    from django.db.models import BaseManager, Model
     from django.db.models.query import QuerySet
     from rest_framework.serializers import Serializer
 
@@ -21,7 +23,7 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     ] = {}
     querysets: dict[
         "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']",
-        'QuerySet | BaseManager',
+        'QuerySet[Model] | BaseManager[Model]',
     ] = {}
 
     def get_action_from_request(
@@ -48,13 +50,24 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet | BaseManager':
+    ) -> 'QuerySet[Model] | BaseManager[Model]':
         action: str = self.get_action_from_request()
         if action == 'partial_update' and 'partial_update' not in self.querysets:
             action = 'update'
-        queryset: QuerySet | BaseManager | None = self.querysets.get(action)
+        queryset: 'QuerySet[Model] | BaseManager[Model] | None' = self.querysets.get(action)
         if queryset is None:
             queryset = super().get_queryset()
+        if self.action == 'list' and getattr(self, 'filter_list_by_owner', True):
+            owner_field: str | None = getattr(self, 'owner_field', None)
+            if owner_field is not None:
+                request_user: 'AbstractBaseUser | AnonymousUser | None' = self.request.user
+                if owner_field == 'self':
+                    owner_field = 'pk'
+                    request_user = request_user.pk
+                elif '__' in owner_field:
+                    select_related: str = '__'.join(owner_field.split('__')[:-1])
+                    queryset = queryset.select_related(select_related)
+                queryset = queryset.filter(**{owner_field: request_user})
         return queryset  # noqa: R504
 
     def get_permissions(self: 'Self') -> list['Any']:

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from . import fields
+from django_utils.django.db.models import fields
 
 __all__: list[str] = [
     'UUIDIDMixin',

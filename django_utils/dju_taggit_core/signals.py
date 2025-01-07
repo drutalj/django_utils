@@ -7,7 +7,7 @@ try:
     from django.dispatch import receiver
     from taggit.models import TagBase, TaggedItemBase  # pyright: ignore[reportMissingImports]
 
-    from .models import HashtagBase, HashtaggedItemBase
+    from django_utils.dju_taggit_core.models import HashtagBase, HashtaggedItemBase
 
     if TYPE_CHECKING:
         from datetime import datetime

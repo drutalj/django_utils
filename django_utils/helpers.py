@@ -75,3 +75,15 @@ class RestrictedFields:  # pylint: disable=too-few-public-methods
                 raise TypeError(
                     _("'%s' parameter is not allowed for %s.") % (param, self.__class__.__name__)
                 )
+
+
+def get_nested_attr(
+    obj: 'Any', attr_path: str, last_item_suffix: str = '', default: 'Any' = None
+) -> 'Any':
+    try:
+        attr_path += last_item_suffix
+        for attr in attr_path.split('__'):
+            obj = getattr(obj, attr)
+    except AttributeError:
+        return default
+    return obj

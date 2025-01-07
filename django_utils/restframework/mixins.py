@@ -1,7 +1,8 @@
 from types import NoneType
 from typing import TYPE_CHECKING
 
-from django.db.models import BaseManager, Model
+from django.db.models import Model
+from django.db.models.manager import BaseManager
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status

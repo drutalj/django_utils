@@ -63,7 +63,7 @@ class FileField(serializers.FileField):
 
 
 class ImageField(FileField, serializers.ImageField):
-    def __init__(  # noqa: CFQ002
+    def __init__(  # noqa: CFQ002,E501  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self: Self,
         allowed_extensions: None | tuple[str, ...] | list[str] | set[str] = None,
         min_size: int = 0,

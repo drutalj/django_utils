@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.contrib.auth.models import AnonymousUser
-    from django.db.models import BaseManager, Model
+    from django.db.models import BaseManager
     from django.db.models.query import QuerySet
     from rest_framework.serializers import Serializer
 
@@ -23,7 +23,7 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
     ] = {}
     querysets: dict[
         "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']",
-        'QuerySet[Model] | BaseManager[Model]',
+        'QuerySet[Any] | BaseManager[Any]',
     ] = {}
 
     def get_action_from_request(
@@ -50,11 +50,11 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet[Model] | BaseManager[Model]':
+    ) -> 'QuerySet[Any] | BaseManager[Any]':
         action: str = self.get_action_from_request()
         if action == 'partial_update' and 'partial_update' not in self.querysets:
             action = 'update'
-        queryset: 'QuerySet[Model] | BaseManager[Model] | None' = self.querysets.get(action)
+        queryset: 'QuerySet[Any] | BaseManager[Any] | None' = self.querysets.get(action)
         if queryset is None:
             queryset = super().get_queryset()
         if self.action == 'list' and getattr(self, 'filter_list_by_owner', True):

@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
     from django.db.models import BaseManager
     from django.db.models.query import QuerySet
+    from rest_framework.pagination import BasePagination
     from rest_framework.serializers import Serializer
 
 
@@ -25,6 +26,22 @@ class GenericViewSet(  # pyright: ignore[reportIncompatibleMethodOverride]
         "Literal['create', 'retrieve', 'update', 'partial_update', 'destroy', 'list']",
         'QuerySet[Any] | BaseManager[Any]',
     ] = {}
+
+    @property
+    def paginator(self: 'Self') -> 'None | BasePagination':
+        if not hasattr(self, '_paginator'):
+            paginator: None | BasePagination = None
+            if self.pagination_class is None:
+                paginator = None
+            else:
+                paginator = self.pagination_class()  # pyright: ignore[reportCallIssue]
+                pagination_options: dict[str, Any] = getattr(self, 'pagination_options', {})
+                for key, value in pagination_options.items():
+                    setattr(paginator, key, value)
+            # pylint: disable=attribute-defined-outside-init
+            self._paginator: None | BasePagination = paginator
+            # pylint: enable=attribute-defined-outside-init
+        return self._paginator
 
     def get_action_from_request(
         self: 'Self',

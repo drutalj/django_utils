@@ -48,7 +48,7 @@ class ResponseSerializerMixin(GenericAPIView):
     def get_object_by_pk(
         self: 'Self',
         pk: 'Any' = None,
-        queryset: 'QuerySet[Model] | BaseManager[Model] | None' = None,
+        queryset: 'QuerySet[Any] | BaseManager[Any] | None' = None,
     ) -> 'Model':
         """
         Returns the object the view is displaying.
@@ -103,8 +103,8 @@ class ResponseSerializerMixin(GenericAPIView):
 
     def get_queryset(  # pyright: ignore[reportIncompatibleMethodOverride]
         self: 'Self',
-    ) -> 'QuerySet[Model] | BaseManager[Model]':
-        queryset: QuerySet[Model] | BaseManager[Model] | None = None
+    ) -> 'QuerySet[Any] | BaseManager[Any]':
+        queryset: QuerySet[Any] | BaseManager[Any] | None = None
         if getattr(self, '_is_response', False) and hasattr(self, 'querysets'):
             queryset = self.querysets.get('retrieve')  # pyright: ignore[reportAttributeAccessIssue]
         if queryset is None:
